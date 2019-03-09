@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="#000000">
+
+    <LinearLayout
+        android:id="@+id/circlesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="true"
+        android:orientation="horizontal" />
+
+    <com.monstar.azul.presentation.view.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/circlesLayout" />
+
+    <com.monstar.azul.presentation.view.TableView
+        android:id="@+id/tableView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/circlesLayout"
+        android:layout_margin="4dp"
+        android:layout_toEndOf="@id/playerView" />
+
+    <com.monstar.azul.presentation.view.PlayerView
+        android:id="@+id/overlayPlayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/circlesLayout"
+        android:background="#000000"
+        android:foreground="@drawable/border"
+        android:padding="1dp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/showOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="8dp"
+        android:text="Стол другого игрока" />
+
+</RelativeLayout>

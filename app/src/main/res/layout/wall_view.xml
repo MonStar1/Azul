@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:columnCount="5"
+    android:orientation="horizontal">
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_blue" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_yellow" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_red" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_black" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_green" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_green" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_blue" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_yellow" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_red" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_black" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_black" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_green" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_blue" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_yellow" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_red" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_red" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_black" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_green" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_blue" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_yellow" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_yellow" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_red" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_black" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_green" />
+
+    <com.monstar.azul.presentation.view.TileView
+        android:layout_width="@dimen/cell_size"
+        android:layout_height="@dimen/cell_size"
+        android:background="@drawable/tile_blue" />
+
+</GridLayout>
