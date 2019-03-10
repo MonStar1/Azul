@@ -29,10 +29,10 @@ class WallView @JvmOverloads constructor(
         removeAllViews()
         inflateView(context)
 
-        wall?.tilesMap?.forEach { point, tile ->
-            val index = point.row * 5 + point.column
+        wall?.tilesMap?.forEach {
+            val index = it.key.row * 5 + it.key.column
 
-            cells()[index].setTile(tile)
+            cells()[index].setTile(it.value)
         }
     }
 }

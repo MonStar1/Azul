@@ -1,5 +1,6 @@
 package com.monstar.azul.presentation.game
 
+import com.monstar.azul.App
 import com.monstar.azul.data.entities.*
 import com.monstar.azul.domain.GameRules
 

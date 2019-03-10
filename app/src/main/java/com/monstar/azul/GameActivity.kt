@@ -1,23 +1,35 @@
 package com.monstar.azul
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.monstar.azul.data.entities.Game
+import com.monstar.azul.domain.BluetoothConnector
 import com.monstar.azul.domain.CreateGame
 import com.monstar.azul.presentation.game.GamePresenter
 import com.monstar.azul.presentation.game.GamePresenterImpl
-import com.monstar.azul.presentation.view.GameView
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import javax.inject.Inject
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-class FullscreenActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var connector: BluetoothConnector
+
+    private val compositeDisposable = CompositeDisposable()
 
     private lateinit var gamePresenter: GamePresenter
-
     private val mHideHandler = Handler()
     private val mHidePart2Runnable = Runnable {
         // Delayed removal of status and navigation bar
@@ -59,31 +71,73 @@ class FullscreenActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         mVisible = true
+
+        App.connectionComponent.inject(this)
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        val createGame = CreateGame()
+        if (connector.isServer == true) {
+            val createGame = CreateGame()
 
-        val profiles = listOf(createGame.createProfile("ВерониЧка"), createGame.createProfile("Андрейка"))
-        val players = profiles.map { createGame.createPlayer(it) }
-        val game = createGame.createGame(players)
+            val profiles = listOf(createGame.createProfile("ВерониЧка"), createGame.createProfile("Андрейка"))
+            val players = profiles.map { createGame.createPlayer(it) }
+            val game = createGame.createGame(players)
 
-        findViewById<View>(R.id.gameView)
+            findViewById<View>(R.id.gameView)
 
-        gamePresenter = GamePresenterImpl().apply {
-            view = gameView
-            gameView.presenter = this
+            gamePresenter = GamePresenterImpl().apply {
+                view = gameView
+                gameView.presenter = this
 
+            }
+
+            gamePresenter.initGame(game)
+
+            compositeDisposable.add(
+                connector.sendGame(game)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
+            )
+        } else {
+            compositeDisposable.add(connector.getDataFrom()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy {
+                    val game = Gson().fromJson(it!!, Game::class.java)
+
+                    gamePresenter = GamePresenterImpl().apply {
+                        view = gameView
+                        gameView.presenter = this
+
+                    }
+
+                    gamePresenter.initGame(game)
+
+                    Toast.makeText(
+                        this,
+                        "BT data: $it",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
         }
-
-        gamePresenter.initGame(game)
 
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        delayedHide(100)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     private fun toggle() {
