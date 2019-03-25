@@ -14,10 +14,6 @@ class CircleView constructor(
 ) : FrameLayout(context, null, 0) {
 
     var circle: Circle? = null
-        set(value) {
-            fillCircle(value!!)
-            field = value
-        }
 
     var onTileClickListener: OnTileClickListener? = null
         set(value) {
@@ -40,10 +36,10 @@ class CircleView constructor(
     }
 
     private fun fillCircle(tiles: List<Tile>) {
-        (tile1 as TileView).setTile(tiles[0])
-        (tile2 as TileView).setTile(tiles[1])
-        (tile3 as TileView).setTile(tiles[2])
-        (tile4 as TileView).setTile(tiles[3])
+        (tile1 as TileView).update(tiles[0])
+        (tile2 as TileView).update(tiles[1])
+        (tile3 as TileView).update(tiles[2])
+        (tile4 as TileView).update(tiles[3])
 
         tileViews.forEach {
             it.onTileClickListener = onTileClickListener
@@ -56,7 +52,7 @@ class CircleView constructor(
 
     private fun removeAllTiles() {
         tileViews.forEach {
-            it.setTile(null)
+            it.update(null)
             it.onTileClickListener = null
         }
     }
@@ -67,11 +63,13 @@ class CircleView constructor(
         }
     }
 
-    fun update() {
-        if (circle?.tiles?.isEmpty() == true) {
+    fun update(circle: Circle) {
+        this.circle = circle
+
+        if (circle.tiles.isEmpty()) {
             removeAllTiles()
         } else {
-            fillCircle(circle!!)
+            fillCircle(circle)
         }
     }
 }

@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.GridLayout
 import androidx.core.view.children
-import androidx.core.view.marginBottom
 import com.monstar.azul.R
 import com.monstar.azul.data.entities.FirstTile
 import com.monstar.azul.data.entities.Table
@@ -23,7 +22,7 @@ class TableView @JvmOverloads constructor(
 
     var onTileClickListener: OnTileClickListener? = null
 
-    lateinit var table: Table
+    var table: Table? = null
 
     fun selectTiles(tileType: TileType) {
         idTable.children.forEach {
@@ -31,7 +30,9 @@ class TableView @JvmOverloads constructor(
         }
     }
 
-    fun updateTable() {
+    fun updateTable(table: Table) {
+        this.table = table
+
         idTable.removeAllViews()
 
         if (table.hasFirstTile) {
@@ -43,7 +44,7 @@ class TableView @JvmOverloads constructor(
                     setMargins(4, 4, 4, 4)
                 }
 
-                setTile(FirstTile)
+                update(FirstTile)
             })
         }
 
@@ -56,7 +57,7 @@ class TableView @JvmOverloads constructor(
 
                         setMargins(4, 4, 4, 4)
                     }
-                    setTile(tile)
+                    update(tile)
                     this@apply.onTileClickListener = this@TableView.onTileClickListener
                 })
             }

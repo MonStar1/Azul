@@ -1,6 +1,7 @@
 package com.monstar.azul
 
 import android.app.Application
+import com.github.ivbaranov.rxbluetooth.BluetoothConnection
 import com.monstar.azul.di.ConnectionComponent
 import com.monstar.azul.di.ConnectionModule
 import com.monstar.azul.di.DaggerConnectionComponent

@@ -56,7 +56,7 @@ class LineCellView @JvmOverloads constructor(
 
     fun update() {
         line?.tiles?.forEachIndexed { index, tile ->
-            cells()[index].setTile(tile)
+            cells()[index].update(tile)
         }
     }
 }

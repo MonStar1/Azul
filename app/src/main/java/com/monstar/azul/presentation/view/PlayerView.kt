@@ -19,8 +19,6 @@ class PlayerView @JvmOverloads constructor(
             field = value
         }
 
-    lateinit var player: Player
-
     val patternLineViews by lazy {
         findViewInDept { it is LineCellView } as MutableList<LineCellView>
     }
@@ -35,7 +33,7 @@ class PlayerView @JvmOverloads constructor(
         patternLineViews.forEach { it.onLineCellClickListener = onLineCellClickListener }
     }
 
-    fun update() {
+    fun update(player: Player) {
         patternLineViews.forEach { it.update() }
 
         playerTurn.text = player.profile.name
@@ -49,7 +47,7 @@ class PlayerView @JvmOverloads constructor(
         }
 
         floorLineView.floorLine = player.floorLine
-        floorLineView.update()
+        floorLineView.update(player.floorLine)
 
         wallView.wall = player.wall
         wallView.update()

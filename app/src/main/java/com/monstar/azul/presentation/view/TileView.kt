@@ -35,7 +35,7 @@ class TileView @JvmOverloads constructor(
 
     private var tile: Tile? = null
 
-    fun setTile(tile: Tile?) {
+    fun update(tile: Tile?) {
         this.tile = tile
 
         when (tile?.tileType) {
@@ -52,7 +52,7 @@ class TileView @JvmOverloads constructor(
     fun getTile() = tile
 
     fun clear() {
-        setTile(null)
+        update(null)
     }
 
     override fun setSelected(selected: Boolean) {

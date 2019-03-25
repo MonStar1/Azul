@@ -24,9 +24,11 @@ class GameView @JvmOverloads constructor(
         View.inflate(context, R.layout.game_view, this)
     }
 
-    val circleViews by lazy {
+    val circleViews = {
         findViewInDept { it is CircleView } as MutableList<CircleView>
     }
+
+    var nextPlayerTurnListener: NextPlayerTurnListener? = null
 
     lateinit var presenter: GamePresenter
 
@@ -37,14 +39,16 @@ class GameView @JvmOverloads constructor(
             circleView.layoutParams = LinearLayout.LayoutParams(0, 300, 1F)
 
             circlesLayout.addView(circleView)
+
+            circleView.update(it)
         }
 
-        circleViews.forEach { it.onTileClickListener = this }
+        circleViews().forEach { it.onTileClickListener = this }
     }
 
     override fun initTable(table: Table) {
         tableView.table = table
-        tableView.updateTable()
+        tableView.updateTable(table)
 
         tableView.onTileClickListener = this
     }
@@ -54,7 +58,7 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun updateCircles(circle: Circle) {
-        circleViews.first { it.circle == circle }.update()
+        circleViews().first { it.circle == circle }.update(circle)
     }
 
     override fun selectTilesOnTable(tileType: TileType) {
@@ -62,21 +66,24 @@ class GameView @JvmOverloads constructor(
     }
 
     override fun selectTilesOnCircle(circle: Circle, tileType: TileType) {
-        circleViews.first { it.circle == circle }.selectTiles(tileType)
+        circleViews().first { it.circle == circle }.selectTiles(tileType)
     }
 
-    override fun updateTable() {
-        tableView.updateTable()
+    override fun updateTable(table: Table) {
+        tableView.updateTable(table)
     }
 
     override fun clearTilesSelection() {
-        circleViews.forEach { it.clearTilesSelection() }
+        circleViews().forEach { it.clearTilesSelection() }
         tableView.clearTilesSelection()
     }
 
-    override fun setCurrentPlayer(player: Player) {
-        playerView.player = player
-        playerView.update()
+    override fun setCurrentPlayer(player: Player, notifyRemoteDevices: Boolean) {
+        playerView.update(player)
+
+        if (notifyRemoteDevices) {
+            nextPlayerTurnListener?.onNextTurn()
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -105,8 +112,7 @@ class GameView @JvmOverloads constructor(
 
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    overlayPlayer.player = player
-                    overlayPlayer.update()
+                    overlayPlayer.update(player)
                     overlayPlayer.visibility = View.VISIBLE
 
                     true
@@ -136,4 +142,8 @@ class GameView @JvmOverloads constructor(
     override fun onLineCellClicked(lineCellView: LineCellView) {
         presenter.onPatterLineClicked(lineCellView.line!!)
     }
+}
+
+interface NextPlayerTurnListener {
+    fun onNextTurn()
 }

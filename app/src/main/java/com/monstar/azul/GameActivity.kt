@@ -5,12 +5,12 @@ import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import com.monstar.azul.data.entities.Game
 import com.monstar.azul.domain.BluetoothConnector
 import com.monstar.azul.domain.CreateGame
+import com.monstar.azul.domain.GameRules
 import com.monstar.azul.presentation.game.GamePresenter
 import com.monstar.azul.presentation.game.GamePresenterImpl
+import com.monstar.azul.presentation.view.NextPlayerTurnListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -22,10 +22,12 @@ import javax.inject.Inject
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-class GameActivity : AppCompatActivity() {
+class GameActivity : AppCompatActivity(), NextPlayerTurnListener {
 
     @Inject
     lateinit var connector: BluetoothConnector
+
+    private var isGameInited = false
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -73,19 +75,20 @@ class GameActivity : AppCompatActivity() {
         mVisible = true
 
         App.connectionComponent.inject(this)
+
+        gameView.nextPlayerTurnListener = this
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
 
-        if (connector.isServer == true) {
+        if (connector.isServer) {
             val createGame = CreateGame()
 
             val profiles = listOf(createGame.createProfile("ВерониЧка"), createGame.createProfile("Андрейка"))
             val players = profiles.map { createGame.createPlayer(it) }
             val game = createGame.createGame(players)
-
-            findViewById<View>(R.id.gameView)
+            GameRules().fillAllCircles(game)
 
             gamePresenter = GamePresenterImpl().apply {
                 view = gameView
@@ -101,33 +104,57 @@ class GameActivity : AppCompatActivity() {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe()
             )
-        } else {
-            compositeDisposable.add(connector.getDataFrom()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
-                    val game = Gson().fromJson(it!!, Game::class.java)
 
-                    gamePresenter = GamePresenterImpl().apply {
-                        view = gameView
-                        gameView.presenter = this
+            isGameInited = true
+        }
 
+        subscribeOnGame()
+        // Trigger the initial hide() shortly after the activity has been
+        // created, to briefly hint to the user that UI controls
+        // are available.
+        delayedHide(100)
+    }
+
+    private fun subscribeOnGame() {
+        compositeDisposable.add(connector.getDataFrom()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onError = {
+                    subscribeOnGame()
+                },
+                onNext = {
+                    if (!isGameInited) {
+                        gamePresenter = GamePresenterImpl().apply {
+                            view = gameView
+                            gameView.presenter = this
+
+                        }
+
+                        gamePresenter.initGame(it)
+                        isGameInited = true
+                    } else {
+                        gamePresenter.updateGame(it)
                     }
-
-                    gamePresenter.initGame(game)
 
                     Toast.makeText(
                         this,
                         "BT data: $it",
                         Toast.LENGTH_SHORT
                     ).show()
-                })
-        }
+                }
+            ))
+    }
 
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100)
+    override fun onNextTurn() {
+        compositeDisposable.add(
+            connector.sendGame(gamePresenter.game)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy {
+
+                }
+        )
     }
 
     override fun onStart() {

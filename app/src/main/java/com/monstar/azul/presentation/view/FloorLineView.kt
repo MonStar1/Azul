@@ -20,13 +20,15 @@ class FloorLineView @JvmOverloads constructor(
 
     private val cells by lazy { findViewInDept { it is TileView } as MutableList<TileView> }
 
-    fun update() {
+    fun update(floorLine: FloorLine) {
+        this.floorLine = floorLine
+
         cells.forEach {
             it.clear()
         }
 
-        floorLine?.tiles?.forEachIndexed { index, tile ->
-            cells[index].setTile(tile)
+        floorLine.tiles.forEachIndexed { index, tile ->
+            cells[index].update(tile)
         }
     }
 }

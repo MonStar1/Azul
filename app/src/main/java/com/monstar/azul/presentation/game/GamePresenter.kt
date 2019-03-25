@@ -1,6 +1,5 @@
 package com.monstar.azul.presentation.game
 
-import com.monstar.azul.App
 import com.monstar.azul.data.entities.*
 import com.monstar.azul.domain.GameRules
 
@@ -10,9 +9,9 @@ interface GameView {
     fun updateCircles(circle: Circle)
     fun selectTilesOnTable(tileType: TileType)
     fun selectTilesOnCircle(circle: Circle, tileType: TileType)
-    fun updateTable()
+    fun updateTable(table: Table)
     fun clearTilesSelection()
-    fun setCurrentPlayer(player: Player)
+    fun setCurrentPlayer(player: Player, notifyRemoteDevices: Boolean)
     fun initFloorLine(floorLine: FloorLine)
 }
 
@@ -24,14 +23,15 @@ interface GamePresenter {
     fun onFloorLineClicked()
 
     val game: Game
+    fun updateGame(game: Game)
 }
 
 class GamePresenterImpl : GamePresenter {
     lateinit var view: GameView
 
     override lateinit var game: Game
-    private val table by lazy { game.table }
-    private val circles by lazy { game.circles }
+    private val table = { game.table }
+    private val circles = { game.circles }
 
     private var selectedTilesOnTable: Boolean = false
     private var selectedCircle: Circle? = null
@@ -43,11 +43,20 @@ class GamePresenterImpl : GamePresenter {
     override fun initGame(game: Game) {
         this.game = game
 
-        gameRules.fillAllCircles(game)
+        view.initCircles(circles())
+        view.initTable(table())
+        view.setCurrentPlayer(game.currentPlayer, false)
+    }
 
-        view.initCircles(circles)
-        view.initTable(table)
-        view.setCurrentPlayer(game.firstPlayer)
+    override fun updateGame(game: Game) {
+        this.game = game
+
+        circles().forEach {
+            view.updateCircles(it)
+        }
+
+        view.updateTable(table())
+        view.setCurrentPlayer(game.currentPlayer, false)
     }
 
     override fun onTileClicked(tile: Tile) {
@@ -56,7 +65,7 @@ class GamePresenterImpl : GamePresenter {
         val circleTile = tilesOnCircles().find { it == tile }
 
         if (circleTile != null) {
-            val circle = circles.find { circle -> circle.tiles.find { tile == it } != null }
+            val circle = circles().find { circle -> circle.tiles.find { tile == it } != null }
 
             selectedTiles = circle!!.tiles.filter { it.tileType == circleTile.tileType }
             selectedCircle = circle
@@ -65,9 +74,9 @@ class GamePresenterImpl : GamePresenter {
 
             view.selectTilesOnCircle(circle, circleTile.tileType)
         } else {
-            val tableTile = table.tiles.find { it == tile }!!
+            val tableTile = table().tiles.find { it == tile }!!
 
-            selectedTiles = table.tiles.filter { it.tileType == tableTile.tileType }
+            selectedTiles = table().tiles.filter { it.tileType == tableTile.tileType }
             selectedTilesOnTable = true
             selectedCircle = null
             selectedTileType = tableTile.tileType
@@ -85,7 +94,7 @@ class GamePresenterImpl : GamePresenter {
 
         if (selectedCircle != null) {
             gameRules.getTilesFromCircleAndPlaceToLine(
-                table,
+                table(),
                 game.currentPlayer,
                 selectedCircle!!,
                 tileType,
@@ -107,7 +116,7 @@ class GamePresenterImpl : GamePresenter {
 
     private fun tilesPlaced() {
         view.clearTilesSelection()
-        view.updateTable()
+        view.updateTable(table())
 
         selectedTilesOnTable = false
         selectedTileType = null
@@ -117,8 +126,8 @@ class GamePresenterImpl : GamePresenter {
         if (gameRules.nextRoundShouldStart(game)) {
             gameRules.startNextRound(game)
 
-            view.updateTable()
-            circles.forEach {
+            view.updateTable(table())
+            circles().forEach {
                 view.updateCircles(it)
             }
 
@@ -137,7 +146,7 @@ class GamePresenterImpl : GamePresenter {
 
         if (selectedCircle != null) {
             gameRules.getTilesFromCircleAndPlaceToFloor(
-                table,
+                table(),
                 game.currentPlayer,
                 selectedCircle!!,
                 tileType
@@ -161,11 +170,11 @@ class GamePresenterImpl : GamePresenter {
         }
 
 
-        view.setCurrentPlayer(game.currentPlayer)
+        view.setCurrentPlayer(game.currentPlayer, true)
     }
 
     private fun tilesOnCircles(): List<Tile> {
-        return circles.flatMap { it.tiles }
+        return circles().flatMap { it.tiles }
     }
 
 }

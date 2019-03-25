@@ -1,7 +1,6 @@
 package com.monstar.azul.presentation.view
 
 import android.content.Context
-import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -32,7 +31,7 @@ class WallView @JvmOverloads constructor(
         wall?.tilesMap?.forEach {
             val index = it.key.row * 5 + it.key.column
 
-            cells()[index].setTile(it.value)
+            cells()[index].update(it.value)
         }
     }
 }

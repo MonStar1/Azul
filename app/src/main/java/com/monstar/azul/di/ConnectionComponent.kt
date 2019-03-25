@@ -1,5 +1,6 @@
 package com.monstar.azul.di
 
+import com.github.ivbaranov.rxbluetooth.BluetoothConnection
 import com.monstar.azul.GameActivity
 import com.monstar.azul.domain.BluetoothConnector
 import com.monstar.azul.presentation.game.GamePresenter

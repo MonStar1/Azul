@@ -30,6 +30,7 @@ class GameRules {
         val bag = game.bag
 
         circles.forEach {
+            it.tiles.clear()
             it.tiles.addAll(bag.getFromBagAndRemove(4))
         }
     }
